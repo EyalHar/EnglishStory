@@ -25,6 +25,7 @@ const readingSessionSchema = new mongoose.Schema({
     levelAfter: Number,
     adjustmentReason: String,
     newlyGraduatedWords: [String],
+    relapsedWords: [String],
   },
 });
 

@@ -60,15 +60,21 @@ function buildPrompt({ cefr, wordsToWeave, avoidTopics, patternHint }) {
     .filter(Boolean)
     .join("\n");
 
+  const hardOrTranslated = wordsToWeave.filter((w) => w.source !== "review").map((w) => w.word);
+  const reviewOnly = wordsToWeave.filter((w) => w.source === "review").map((w) => w.word);
+
   const contents = [
-    wordsToWeave?.length
-      ? `Naturally use every one of these words at least once in the story: ${wordsToWeave
-          .map((w) => w.word)
-          .join(", ")}.`
+    hardOrTranslated.length
+      ? `Naturally use every one of these words at least once in the story: ${hardOrTranslated.join(", ")}.`
       : "Pick an interesting everyday topic for the story.",
+    reviewOnly.length
+      ? `Also naturally include these words, which the learner already mastered before — use them in a simple, easy, low-stakes way so they feel like a confidence boost, not a new challenge: ${reviewOnly.join(", ")}.`
+      : "",
     'List every word from the required list above in targetWords with its matching "source". You may also list a few other notable vocabulary words from the story with source "new".',
     "List every multi-word expression with a special combined meaning that appears in the story body in the expressions array, exactly as instructed.",
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 
   return { systemInstruction, contents };
 }

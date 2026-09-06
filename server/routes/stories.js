@@ -7,6 +7,7 @@ const TranslatedWord = require("../models/TranslatedWord");
 const { authMiddleware } = require("../middleware/auth");
 const { generateStory, missingWords } = require("../services/storyGeneration");
 const { ACTIVE_HARD_WORD_BACKOFF_THRESHOLD } = require("../services/levelModel");
+const { pickDueReviewWords } = require("../services/spacedRepetition");
 
 const router = express.Router();
 
@@ -40,9 +41,13 @@ router.post("/next", authMiddleware, async (req, res) => {
       .filter((w) => !hardWordSet.has(w))
       .slice(0, 3);
 
+    // Graduated words due for spaced-repetition review — reappear occasionally so they aren't forgotten.
+    const reviewWords = await pickDueReviewWords(HardWord, user.googleId, user.stats.storiesCompleted);
+
     const wordsToWeave = [
       ...activeHardWords.map((w) => ({ word: w.word, source: "hard" })),
       ...translatedWords.map((w) => ({ word: w, source: "translated" })),
+      ...reviewWords.map((w) => ({ word: w.word, source: "review" })),
     ];
 
     const generated = await generateStory({ cefr: user.level.cefr, wordsToWeave, avoidTopics });

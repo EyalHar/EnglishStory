@@ -1,4 +1,4 @@
-function buildFeedbackMessage({ levelBefore, levelAfter, cefr, newlyGraduatedWords, streak }) {
+function buildFeedbackMessage({ levelBefore, levelAfter, cefr, newlyGraduatedWords, relapsedWords, streak }) {
   const messages = [];
 
   if (levelAfter > levelBefore) {
@@ -11,6 +11,10 @@ function buildFeedbackMessage({ levelBefore, levelAfter, cefr, newlyGraduatedWor
 
   if (newlyGraduatedWords.length) {
     messages.push(`${newlyGraduatedWords.length} מילים שהיו קשות בעבר כבר לא קשות לך יותר!`);
+  }
+
+  if (relapsedWords?.length) {
+    messages.push(`שמנו לב ש-${relapsedWords.length} מילים שחשבנו שכבר שלטת בהן עדיין קשות — נתרגל אותן שוב.`);
   }
 
   if (streak.current > 1) {

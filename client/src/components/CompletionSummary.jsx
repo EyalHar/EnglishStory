@@ -27,6 +27,12 @@ export default function CompletionSummary({ result, onNewStory, onHome }) {
         </p>
       )}
 
+      {result.relapsedWords?.length > 0 && (
+        <p className={styles.relapsed}>
+          חזרו להיות קשות: <span dir="ltr">{result.relapsedWords.join(", ")}</span>
+        </p>
+      )}
+
       <div className={styles.actions}>
         <button className={styles.primaryBtn} onClick={onNewStory}>
           סיפור הבא

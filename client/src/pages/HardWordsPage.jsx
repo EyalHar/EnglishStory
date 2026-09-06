@@ -51,6 +51,7 @@ export default function HardWordsPage() {
             {graduatedWords.map((w) => (
               <div key={w._id} className={`${styles.card} ${styles.graduatedCard}`}>
                 <span className={styles.word}>{w.word}</span>
+                <span className={styles.counter}>רמת שליטה {w.spacedRepetition?.boxLevel ?? 1} מתוך 4</span>
               </div>
             ))}
           </div>

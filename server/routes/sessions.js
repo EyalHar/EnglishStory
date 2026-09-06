@@ -10,6 +10,7 @@ const { buildWordMetadata } = require("../services/wordFeatures");
 const { countUniqueWords } = require("../services/storyGeneration");
 const { adjustLevelAfterSession } = require("../services/levelModel");
 const { buildFeedbackMessage } = require("../services/feedback");
+const { scheduleFirstReview, boxUp, relapseToActive } = require("../services/spacedRepetition");
 
 const router = express.Router();
 
@@ -135,21 +136,6 @@ router.post("/:sessionId/complete", authMiddleware, async (req, res) => {
       activeHardWordCount,
     });
 
-    // Graduate hard words that appeared in this story but weren't struggled with this time.
-    const activeHardWords = await HardWord.find({ userId: user.googleId, status: "active" });
-    const bodyLower = story.body.toLowerCase();
-    const newlyGraduatedWords = [];
-    for (const hw of activeHardWords) {
-      const firstWord = hw.word.split(" ")[0];
-      const appears = new RegExp(`\\b${firstWord}\\b`, "i").test(bodyLower);
-      if (appears && !struggledWords.has(hw.word)) {
-        hw.status = "graduated";
-        hw.graduatedAt = new Date();
-        await hw.save();
-        newlyGraduatedWords.push(hw.word);
-      }
-    }
-
     // Streak: bump if the last completed story was yesterday, reset to 1 otherwise (unless already today).
     const today = new Date();
     const lastDate = user.streak.lastStoryDate;
@@ -168,7 +154,49 @@ router.post("/:sessionId/complete", authMiddleware, async (req, res) => {
     user.level.history.push({ score: newScore, cefr, date: new Date(), reason });
     user.level.history = user.level.history.slice(-50);
     user.stats.storiesCompleted += 1;
-    user.stats.wordsMastered += newlyGraduatedWords.length;
+    const storiesCompleted = user.stats.storiesCompleted;
+
+    // Graduate hard words that appeared in this story but weren't struggled with this time —
+    // they enter spaced repetition instead of disappearing outright.
+    const activeHardWords = await HardWord.find({ userId: user.googleId, status: "active" });
+    const bodyLower = story.body.toLowerCase();
+    const newlyGraduatedWords = [];
+    for (const hw of activeHardWords) {
+      const firstWord = hw.word.split(" ")[0];
+      const appears = new RegExp(`\\b${firstWord}\\b`, "i").test(bodyLower);
+      if (appears && !struggledWords.has(hw.word)) {
+        hw.status = "graduated";
+        hw.graduatedAt = new Date();
+        scheduleFirstReview(hw, storiesCompleted);
+        await hw.save();
+        newlyGraduatedWords.push(hw.word);
+      }
+    }
+
+    // Words that came back for spaced-repetition review in this story: box up on success,
+    // relapse to the active hard-word pool if they turned out to still be hard.
+    const reviewWordTexts = (story.targetWords || [])
+      .filter((tw) => tw.source === "review")
+      .map((tw) => tw.word);
+    const relapsedWords = [];
+    if (reviewWordTexts.length) {
+      const reviewHardWords = await HardWord.find({
+        userId: user.googleId,
+        word: { $in: reviewWordTexts },
+        status: "graduated",
+      });
+      for (const hw of reviewHardWords) {
+        if (struggledWords.has(hw.word)) {
+          relapseToActive(hw);
+          relapsedWords.push(hw.word);
+        } else {
+          boxUp(hw, storiesCompleted);
+        }
+        await hw.save();
+      }
+    }
+
+    user.stats.wordsMastered += newlyGraduatedWords.length - relapsedWords.length;
     await user.save();
 
     const summary = {
@@ -179,6 +207,7 @@ router.post("/:sessionId/complete", authMiddleware, async (req, res) => {
       levelAfter: newScore,
       adjustmentReason: reason,
       newlyGraduatedWords,
+      relapsedWords,
     };
 
     session.status = "completed";
@@ -191,6 +220,7 @@ router.post("/:sessionId/complete", authMiddleware, async (req, res) => {
       levelAfter: newScore,
       cefr,
       newlyGraduatedWords,
+      relapsedWords,
       streak: user.streak,
     });
 
@@ -199,6 +229,7 @@ router.post("/:sessionId/complete", authMiddleware, async (req, res) => {
       levelBefore,
       levelAfter: newScore,
       newlyGraduatedWords,
+      relapsedWords,
       streak: user.streak,
       feedbackMessage,
     });

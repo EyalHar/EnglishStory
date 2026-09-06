@@ -1,6 +1,6 @@
 # EnglishStory — Project Status
 
-Last updated: after M5 (adaptive next-story), before spaced repetition + pattern detection.
+Last updated: after M5 + spaced repetition, before pattern detection.
 
 ## Core idea
 
@@ -25,7 +25,8 @@ Google login → onboarding (self-reported level + a placement test, **no age qu
 | M2 — Onboarding + placement test | ✅ | `server/routes/onboarding.js`, `server/data/placementWords.json`, `client/src/pages/Onboarding*.jsx` |
 | M3 — Story generation + reader | ✅ | `server/services/storyGeneration.js`, `server/services/geminiClient.js`, `client/src/pages/StoryReaderPage.jsx` |
 | M4 — Hard words + contextual translation | ✅ | `server/models/HardWord.js`, `server/services/translation.js`, `client/src/components/WordPopover.jsx`, `client/src/pages/HardWordsPage.jsx` |
-| M5 — Level adjustment, graduation, adaptive next story | ✅ (spaced repetition not yet) | `server/services/levelModel.js`, `server/services/feedback.js`, `POST /api/sessions/:id/complete`, hard/translated words woven into `POST /api/stories/next` |
+| M5 — Level adjustment, graduation, adaptive next story | ✅ | `server/services/levelModel.js`, `server/services/feedback.js`, `POST /api/sessions/:id/complete`, hard/translated words woven into `POST /api/stories/next` |
+| M5b — Spaced repetition for graduated words | ✅ | `server/services/spacedRepetition.js` |
 
 ### M5 detail — what happens when a story is finished
 
@@ -36,14 +37,22 @@ Google login → onboarding (self-reported level + a placement test, **no age qu
 4. Updates the daily streak and `stats.storiesCompleted`.
 5. Returns a Hebrew feedback message (age-neutral tone — age collection was explicitly dropped from onboarding).
 
-`POST /api/stories/next` then pulls up to 6 active hard words (fewer, 3, if the backoff threshold is exceeded) plus up to 3 recently-translated words, and asks Gemini to weave them into the new story.
+`POST /api/stories/next` then pulls up to 6 active hard words (fewer, 3, if the backoff threshold is exceeded), up to 3 recently-translated words, and up to 2 graduated words due for spaced-repetition review, and asks Gemini to weave them into the new story (review words specifically framed as "easy, confidence-boost" usage, not a new challenge).
+
+### M5b detail — spaced repetition (`server/services/spacedRepetition.js`)
+
+Scheduled by **completed-story count**, not calendar date (usage cadence here is "whenever the user clicks Next Story", not daily practice). Four boxes, keyed to how many future stories to skip before a word is eligible for review again: box 1 → skip 2, box 2 → skip 5, box 3 → skip 10, box 4 → skip 20.
+
+- On graduation: `scheduleFirstReview` sets `boxLevel: 1`, `dueAtStoryIndex: storiesCompleted + 2`.
+- `POST /api/stories/next` calls `pickDueReviewWords` (up to 2, oldest-due first) and adds them as `source: "review"` in `wordsToWeave`.
+- `POST /api/sessions/:id/complete` checks every `review`-source word from `story.targetWords`: if the user didn't need it again → `boxUp` (moves to a longer-interval box); if they did → `relapseToActive` (back to the normal active hard-word pool, `status: "active"`, counter incremented, box reset).
+- Surfaced in the completion summary (`relapsedWords` alongside `newlyGraduatedWords`) and in `HardWordsPage` (box level shown per graduated word).
 
 ## What's NOT built yet
 
-1. **Spaced repetition for graduated words** — `HardWord.spacedRepetition` (boxLevel, dueAtStoryIndex, reviewCount) fields exist in the schema but nothing reads/writes them yet. Once a word graduates it currently never reappears deliberately. Planned: a 4-box, story-count-keyed Leitner schedule (not calendar-based, since usage cadence is user-driven) — box 1 = skip 2 stories, box 2 = 5, box 3 = 10, box 4 = 20; box up on success, un-graduate (back to active) on failure.
-2. **Difficulty pattern detection** — no per-word feature aggregation or `DifficultyPatternProfile` yet. Planned: cheap local feature extraction (length bucket, syllable count, letter n-grams) on every `HardWord`, occasional batched Gemini call for topic classification, a Mongo aggregation into a per-user profile, and a natural-language hint injected into the story-generation system prompt.
-3. **Progress page** (`/progress`) and **story history page** (`/history`) — both still `ComingSoonPage` placeholders. `User.level.history` is already being recorded (capped at last 50 entries) so a level-over-time chart is ready to build against.
-4. **`models/WordTranslationCache.js`** exists but is intentionally unused (see the contextual-translation note above) — either repurpose it later (e.g. a common-words glossary) or remove it.
+1. **Difficulty pattern detection** — no per-word feature aggregation or `DifficultyPatternProfile` yet. Planned: cheap local feature extraction (length bucket, syllable count, letter n-grams) on every `HardWord`, occasional batched Gemini call for topic classification, a Mongo aggregation into a per-user profile, and a natural-language hint injected into the story-generation system prompt.
+2. **Progress page** (`/progress`) and **story history page** (`/history`) — both still `ComingSoonPage` placeholders. `User.level.history` is already being recorded (capped at last 50 entries) so a level-over-time chart is ready to build against.
+3. **`models/WordTranslationCache.js`** exists but is intentionally unused (see the contextual-translation note above) — either repurpose it later (e.g. a common-words glossary) or remove it.
 
 ## Known simplifications (deliberate, not oversights)
 
