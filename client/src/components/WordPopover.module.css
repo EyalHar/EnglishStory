@@ -1,0 +1,70 @@
+.popover {
+  position: absolute;
+  transform: translate(-50%, 10px);
+  background: var(--color-text);
+  color: #ffffff;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  font-size: 0.9rem;
+  z-index: 20;
+  min-width: 110px;
+  text-align: center;
+  direction: rtl;
+}
+
+.word {
+  font-weight: 700;
+  direction: ltr;
+  margin-bottom: var(--space-1);
+}
+
+.translation {
+  font-size: 1.1rem;
+}
+
+.status,
+.error {
+  opacity: 0.85;
+  font-size: 0.8rem;
+}
+
+.error {
+  color: #fca5a5;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.hardBtn {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.hardBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hardBtnActive {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+}

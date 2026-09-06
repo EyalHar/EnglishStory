@@ -1,0 +1,13 @@
+.shell {
+  min-height: 100vh;
+}
+
+.main {
+  margin-right: var(--sidebar-width);
+}
+
+@media (max-width: 720px) {
+  .main {
+    margin-right: 0;
+  }
+}

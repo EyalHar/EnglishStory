@@ -1,0 +1,62 @@
+.page {
+  padding: var(--space-6);
+  max-width: 900px;
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  font-size: 1.75rem;
+}
+
+.sectionTitle {
+  margin: var(--space-6) 0 var(--space-4);
+  font-size: 1.2rem;
+}
+
+.subtitle {
+  margin: 0 0 var(--space-6);
+  color: var(--color-text-muted);
+}
+
+.empty {
+  color: var(--color-text-muted);
+}
+
+.error {
+  color: var(--color-danger);
+  margin-bottom: var(--space-4);
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  min-width: 140px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.graduatedCard {
+  opacity: 0.7;
+}
+
+.word {
+  font-size: 1.1rem;
+  font-weight: 700;
+  direction: ltr;
+  text-align: left;
+}
+
+.counter {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}

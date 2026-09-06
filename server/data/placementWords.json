@@ -1,0 +1,43 @@
+[
+  { "word": "cat", "cefr": "A1", "presentedLevel": 8 },
+  { "word": "house", "cefr": "A1", "presentedLevel": 8 },
+  { "word": "water", "cefr": "A1", "presentedLevel": 8 },
+  { "word": "happy", "cefr": "A1", "presentedLevel": 8 },
+  { "word": "book", "cefr": "A1", "presentedLevel": 8 },
+  { "word": "walk", "cefr": "A1", "presentedLevel": 8 },
+
+  { "word": "weather", "cefr": "A2", "presentedLevel": 25 },
+  { "word": "decide", "cefr": "A2", "presentedLevel": 25 },
+  { "word": "family", "cefr": "A2", "presentedLevel": 25 },
+  { "word": "journey", "cefr": "A2", "presentedLevel": 25 },
+  { "word": "borrow", "cefr": "A2", "presentedLevel": 25 },
+  { "word": "comfortable", "cefr": "A2", "presentedLevel": 25 },
+
+  { "word": "achieve", "cefr": "B1", "presentedLevel": 42 },
+  { "word": "environment", "cefr": "B1", "presentedLevel": 42 },
+  { "word": "opportunity", "cefr": "B1", "presentedLevel": 42 },
+  { "word": "ancient", "cefr": "B1", "presentedLevel": 42 },
+  { "word": "various", "cefr": "B1", "presentedLevel": 42 },
+  { "word": "argument", "cefr": "B1", "presentedLevel": 42 },
+
+  { "word": "reluctant", "cefr": "B2", "presentedLevel": 58 },
+  { "word": "subsequent", "cefr": "B2", "presentedLevel": 58 },
+  { "word": "controversy", "cefr": "B2", "presentedLevel": 58 },
+  { "word": "inevitable", "cefr": "B2", "presentedLevel": 58 },
+  { "word": "comprehensive", "cefr": "B2", "presentedLevel": 58 },
+  { "word": "distinguish", "cefr": "B2", "presentedLevel": 58 },
+
+  { "word": "ambiguous", "cefr": "C1", "presentedLevel": 75 },
+  { "word": "meticulous", "cefr": "C1", "presentedLevel": 75 },
+  { "word": "pragmatic", "cefr": "C1", "presentedLevel": 75 },
+  { "word": "ubiquitous", "cefr": "C1", "presentedLevel": 75 },
+  { "word": "contentious", "cefr": "C1", "presentedLevel": 75 },
+  { "word": "resilience", "cefr": "C1", "presentedLevel": 75 },
+
+  { "word": "perfunctory", "cefr": "C2", "presentedLevel": 92 },
+  { "word": "ephemeral", "cefr": "C2", "presentedLevel": 92 },
+  { "word": "cacophony", "cefr": "C2", "presentedLevel": 92 },
+  { "word": "obfuscate", "cefr": "C2", "presentedLevel": 92 },
+  { "word": "sycophant", "cefr": "C2", "presentedLevel": 92 },
+  { "word": "ineffable", "cefr": "C2", "presentedLevel": 92 }
+]

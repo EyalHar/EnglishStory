@@ -1,0 +1,58 @@
+.page {
+  padding: var(--space-6);
+  max-width: 900px;
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  font-size: 1.75rem;
+}
+
+.subtitle {
+  margin: 0 0 var(--space-5);
+  color: var(--color-text-muted);
+}
+
+.ctaBtn {
+  display: inline-block;
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) var(--space-6);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ctaBtn:hover {
+  background: var(--color-primary-hover);
+}
+
+.cardRow {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  min-width: 160px;
+  box-shadow: var(--shadow-sm);
+}
+
+.cardLabel {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.cardValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}

@@ -1,0 +1,41 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #7c3aed 100%);
+  padding: var(--space-4);
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-6);
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  font-size: 1.75rem;
+  color: var(--color-primary);
+}
+
+.subtitle {
+  margin: 0 0 var(--space-5);
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.loginBox {
+  display: flex;
+  justify-content: center;
+}
+
+.error {
+  margin-top: var(--space-4);
+  color: var(--color-danger);
+  font-size: 0.85rem;
+}
