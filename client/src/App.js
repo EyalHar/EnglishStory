@@ -9,7 +9,8 @@ import HomePage from "./pages/HomePage";
 import StoryEntryPage from "./pages/StoryEntryPage";
 import StoryReaderPage from "./pages/StoryReaderPage";
 import HardWordsPage from "./pages/HardWordsPage";
-import ComingSoonPage from "./pages/ComingSoonPage";
+import ProgressPage from "./pages/ProgressPage";
+import StoryHistoryPage from "./pages/StoryHistoryPage";
 import styles from "./App.module.css";
 
 function AppShell({ children }) {
@@ -52,8 +53,8 @@ export default function App() {
                   <Route path="/story" element={<StoryEntryPage />} />
                   <Route path="/story/:id" element={<StoryReaderPage />} />
                   <Route path="/words" element={<HardWordsPage />} />
-                  <Route path="/progress" element={<ComingSoonPage title="התקדמות" />} />
-                  <Route path="/history" element={<ComingSoonPage title="היסטוריית סיפורים" />} />
+                  <Route path="/progress" element={<ProgressPage />} />
+                  <Route path="/history" element={<StoryHistoryPage />} />
                 </Routes>
               </AppShell>
             </ProtectedRoute>

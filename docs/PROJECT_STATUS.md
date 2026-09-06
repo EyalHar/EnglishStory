@@ -1,6 +1,6 @@
 # EnglishStory — Project Status
 
-Last updated: after M5 + spaced repetition + pattern detection (M6a). Progress/history pages still pending.
+Last updated: after M6 (pattern detection + progress/history pages) — all originally planned milestones (M1–M6) are now built.
 
 ## Core idea
 
@@ -28,6 +28,7 @@ Google login → onboarding (self-reported level + a placement test, **no age qu
 | M5 — Level adjustment, graduation, adaptive next story | ✅ | `server/services/levelModel.js`, `server/services/feedback.js`, `POST /api/sessions/:id/complete`, hard/translated words woven into `POST /api/stories/next` |
 | M5b — Spaced repetition for graduated words | ✅ | `server/services/spacedRepetition.js` |
 | M6a — Difficulty pattern detection | ✅ | `server/services/patternDetection.js`, `server/services/wordTopicClassifier.js`, `server/models/DifficultyPatternProfile.js` |
+| M6b — Progress + story history pages | ✅ | `server/routes/progress.js`, `client/src/pages/ProgressPage.jsx`, `client/src/pages/StoryHistoryPage.jsx`, `client/src/components/LevelHistoryChart.jsx` |
 
 ### M5 detail — what happens when a story is finished
 
@@ -58,10 +59,18 @@ Two layers, both lazy — run inline on every `POST /api/stories/next` call (che
 
 `recomputeProfile` then runs a Mongo aggregation over the user's active+graduated hard words into `DifficultyPatternProfile` (length-bucket distribution, avg length/syllables, top 8 letter n-grams, top 5 weak topics). `buildPatternHintText` turns that into a short natural-language instruction (e.g. *"This learner tends to struggle with long words... Weak topic areas: business, technology..."*) injected into the story-generation system prompt (`storyGeneration.js`'s existing `patternHint` parameter, previously unused). The hint used for each story is also snapshotted in `Story.generationParams.patternHint` for debugging.
 
-## What's NOT built yet
+### M6b detail — progress + history pages
 
-1. **Progress page** (`/progress`) and **story history page** (`/history`) — both still `ComingSoonPage` placeholders. `User.level.history` is already being recorded (capped at last 50 entries), and `DifficultyPatternProfile` now exists, so both a level-over-time chart and a "your weak spots" widget are ready to build against — just need a read route (e.g. `GET /api/progress/summary`, `GET /api/progress/pattern-profile`) and the page UI.
-2. **`models/WordTranslationCache.js`** exists but is intentionally unused (see the contextual-translation note above) — either repurpose it later (e.g. a common-words glossary) or remove it.
+- `GET /api/progress/summary` — level (score/cefr/history), streak, stats, active hard-word count.
+- `GET /api/progress/pattern-profile` — the `DifficultyPatternProfile` from M6a.
+- `ProgressPage`: stat cards, a hand-rolled inline-SVG line chart (`LevelHistoryChart` — no charting library, this app's needs don't justify the dependency) plotting `level.history` scores over time, and a "difficulty patterns" card (avg hard-word length, weak topics, common letter n-grams) shown once at least 3 hard words have been sampled.
+- `StoryHistoryPage`: past stories as clickable cards (title, CEFR badge, date, completed/in-progress status, topics) → opens that story in the reader.
+
+## What's left / possible future work
+
+1. **`models/WordTranslationCache.js`** exists but is intentionally unused (see the contextual-translation note above) — either repurpose it later (e.g. a common-words glossary) or remove it.
+2. Revisiting a **completed** story from history reopens the plain reader (translate/mark-hard still work) rather than showing its saved completion summary — a minor UX gap, not a bug.
+3. No automated eval of story quality/CEFR-accuracy — quality has been checked manually so far.
 
 ## Known simplifications (deliberate, not oversights)
 

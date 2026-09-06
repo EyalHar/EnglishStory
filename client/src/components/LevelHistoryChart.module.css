@@ -1,0 +1,29 @@
+.chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.axis {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.line {
+  stroke: var(--color-primary);
+  stroke-width: 2.5;
+}
+
+.dot {
+  fill: var(--color-primary);
+}
+
+.lastLabel {
+  fill: var(--color-primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.empty {
+  color: var(--color-text-muted);
+}
