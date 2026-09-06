@@ -8,6 +8,7 @@ const { authMiddleware } = require("../middleware/auth");
 const { generateStory, missingWords } = require("../services/storyGeneration");
 const { ACTIVE_HARD_WORD_BACKOFF_THRESHOLD } = require("../services/levelModel");
 const { pickDueReviewWords } = require("../services/spacedRepetition");
+const { getPatternHint } = require("../services/patternDetection");
 
 const router = express.Router();
 
@@ -50,7 +51,11 @@ router.post("/next", authMiddleware, async (req, res) => {
       ...reviewWords.map((w) => ({ word: w.word, source: "review" })),
     ];
 
-    const generated = await generateStory({ cefr: user.level.cefr, wordsToWeave, avoidTopics });
+    // Detects patterns in what this learner struggles with (long words, letter sequences, weak
+    // topics) and turns them into a natural-language hint for the story-generation prompt.
+    const patternHint = await getPatternHint(user.googleId);
+
+    const generated = await generateStory({ cefr: user.level.cefr, wordsToWeave, avoidTopics, patternHint });
 
     const missing = missingWords(generated.body, generated.targetWords || []);
     if (missing.length) {
@@ -65,7 +70,7 @@ router.post("/next", authMiddleware, async (req, res) => {
       topics: generated.topics || [],
       targetWords: generated.targetWords || [],
       expressions: generated.expressions || [],
-      generationParams: { levelScore: user.level.score, avoidTopics },
+      generationParams: { levelScore: user.level.score, avoidTopics, patternHint },
     });
 
     const session = await ReadingSession.create({
